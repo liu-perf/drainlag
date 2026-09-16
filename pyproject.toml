@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drainlag"
+version = "0.1.0"
+description = "How wrong is a GPU timer that never drains the queue? Measured: 0.98x to 595x, and it is not a property of the code"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "liu-perf" }]
+keywords = ["gpu", "cuda", "benchmarking", "measurement", "static-analysis"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: System :: Benchmark",
+]
+# Zero runtime dependencies. Reading the results needs nothing; reproducing
+# them needs torch and a CUDA device, which is why `measure/` is not a package
+# and is not imported by anything here.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.4"]
+measure = ["torch>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/liu-perf/drainlag"
+Documentation = "https://liu-perf.github.io/drainlag/"
+
+[project.scripts]
+drainlag = "drainlag.cli:main"
+
+[tool.setuptools]
+packages = ["drainlag"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+# Same set as the other twelve repositories in this series.
+select = ["E4", "E7", "E9", "F", "B", "I", "C4", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# measure/ imports torch after checking for a device and prints as it goes;
+# it is a script, not library code, and is never imported by the package.
+# E402: torch is imported after a device check. E702: the timed regions are
+# deliberately packed onto one line -- `t0 = clock(); work(); t1 = clock()` --
+# because putting statements between the clock and the work is how you end up
+# measuring the wrong thing, and the layout should make that visible.
+"measure/*.py" = ["E402", "E702", "B007"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

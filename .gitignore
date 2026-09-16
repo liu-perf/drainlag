@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Raw measurement scratch. The committed data/ files are the record; anything
+# a re-run drops beside them is not.
+_out/
+*.raw.json

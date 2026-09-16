@@ -1,0 +1,54 @@
+name: ci
+
+# CPU only, no GPU, no torch. Everything below reads the JSON in data/ --
+# which is the point: reproducing the measurements needs a CUDA device, and
+# re-checking the conclusions must not.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q
+      - run: python -m compileall -q drainlag
+
+      - name: invariants
+        run: drainlag check
+
+      # The conclusions, as build gates. If a sweep is re-run and the prose is
+      # not, these fail.
+      - name: the numbers in the README are the numbers in the data
+        run: |
+          drainlag report | tee /tmp/r.txt
+          grep -q "0.98x to 595x too fast" /tmp/r.txt
+          grep -q "an un-drained timer is already correct" /tmp/r.txt
+          grep -q "a longer loop makes the missing drain matter LESS" /tmp/r.txt
+          grep -q "resolves to false_positive" /tmp/r.txt
+          grep -q "read a third way" /tmp/r.txt
+          grep -q "measure the pipeline rate, not the kernel" /tmp/r.txt
+
+      - name: both retracted claims are still on the record
+        run: |
+          drainlag claims --support retracted | tee /tmp/c.txt
+          grep -q "5-50x" /tmp/c.txt
+          grep -q "10-100x" /tmp/c.txt
+
+      - name: no magnitude that source cannot know is quoted to a user
+        run: drainlag report | grep -q "none of them appears in a user-visible message"
+
+      # The model that failed is still in the data. Deleting it would hide the
+      # finding, so its absence is a build failure.
+      - name: the failed speedup model is still on the record
+        run: python -c "import json;d=json.load(open('data/graphs.json'));assert all('predicted_speedup_from_event_timing' in c for c in d['cells'])"

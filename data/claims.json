@@ -1,0 +1,167 @@
+{
+ "schema": "drainlag/claims/1",
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 5060 Ti",
+  "sm": "12.0",
+  "torch": "2.11.0+cu128",
+  "cuda_runtime": "12.8",
+  "os": "Windows 11"
+ },
+ "saturation": {
+  "n": 1024,
+  "device_us_per_launch": 55.36640167236328,
+  "rows": [
+   {
+    "k": 64,
+    "undrained_ms": 0.6111999973654747,
+    "drained_ms": 3.562700003385544,
+    "ratio": 5.829024899774636,
+    "host_us_per_launch": 9.549999958835542
+   },
+   {
+    "k": 256,
+    "undrained_ms": 2.1783000556752086,
+    "drained_ms": 14.234200003556907,
+    "ratio": 6.53454512222593,
+    "host_us_per_launch": 8.508984592481283
+   },
+   {
+    "k": 1024,
+    "undrained_ms": 9.078800096176565,
+    "drained_ms": 56.80000002030283,
+    "ratio": 6.256333372096552,
+    "host_us_per_launch": 8.866015718922426
+   },
+   {
+    "k": 2048,
+    "undrained_ms": 58.73190006241202,
+    "drained_ms": 113.43999998643994,
+    "ratio": 1.9314886776333104,
+    "host_us_per_launch": 28.67768557734962
+   },
+   {
+    "k": 4096,
+    "undrained_ms": 172.5547999376431,
+    "drained_ms": 226.68520000297576,
+    "ratio": 1.3136997642771686,
+    "host_us_per_launch": 42.12763670352615
+   },
+   {
+    "k": 8192,
+    "undrained_ms": 400.84090002346784,
+    "drained_ms": 453.19440006278455,
+    "ratio": 1.1306091769483892,
+    "host_us_per_launch": 48.930773928645976
+   },
+   {
+    "k": 16384,
+    "undrained_ms": 855.1401000004262,
+    "drained_ms": 906.2224000226706,
+    "ratio": 1.059735591889819,
+    "host_us_per_launch": 52.19360961916664
+   }
+  ]
+ },
+ "contamination": {
+  "n": 1024,
+  "k": 4096,
+  "no_drain_between_rounds": [
+   174.55919994972646,
+   231.94960004184395,
+   218.91310007777065,
+   232.2393999202177,
+   226.64870007429272
+  ],
+  "drain_between_rounds": [
+   175.52320007234812,
+   180.00390008091927,
+   172.68560000229627,
+   178.5457000369206,
+   182.38449993077666
+  ],
+  "first_vs_last_no_drain": 1.2984059284160798,
+  "first_vs_last_drained": 1.039090558146162
+ },
+ "warmup": {
+  "cublas_first_call_of_a_new_shape": [
+   {
+    "n": 1024,
+    "first_us": 131.00799918174744,
+    "steady_us": 55.50079822540283,
+    "ratio": 2.3604705404360256
+   },
+   {
+    "n": 1536,
+    "first_us": 166.75199568271637,
+    "steady_us": 158.61056327819824,
+    "ratio": 1.0513296985790177
+   },
+   {
+    "n": 2048,
+    "first_us": 384.67198610305786,
+    "steady_us": 371.3798522949219,
+    "ratio": 1.0357912087206615
+   },
+   {
+    "n": 3072,
+    "first_us": 1252.3200511932373,
+    "steady_us": 1216.5116882324219,
+    "ratio": 1.0294352806530322
+   }
+  ],
+  "host_timed_first_call": [
+   {
+    "n": 1024,
+    "first_us": 138.40000610798597,
+    "steady_us": 67.10004527121782,
+    "ratio": 2.062591843993164
+   },
+   {
+    "n": 2048,
+    "first_us": 643.5000104829669,
+    "steady_us": 386.2499725073576,
+    "ratio": 1.6660195632006394
+   }
+  ],
+  "torch_compile_first_call": {
+   "error": "TritonMissing: Cannot find a working triton installation. Either the package is not installed or it is too old. More information on installing Triton can be found at: https://github.com/triton-lang/triton\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n"
+  }
+ },
+ "verdict_torch_load": {
+  "rows": [
+   {
+    "variant": "no_sync",
+    "ms": [
+     58.582100085914135,
+     52.56270000245422,
+     54.01469999924302,
+     54.372600046917796,
+     54.294400033541024
+    ],
+    "median_ms": 54.294400033541024,
+    "elements": 23068672
+   },
+   {
+    "variant": "with_sync",
+    "ms": [
+     55.449899984523654,
+     53.47059993073344,
+     53.046800079755485,
+     53.78189997281879,
+     54.37919998075813
+    ],
+    "median_ms": 53.78189997281879,
+    "elements": 23068672
+   }
+  ],
+  "with_sync_over_no_sync": 0.9905607196984287,
+  "verdict": "the copy blocks the host; the un-drained number is already right"
+ },
+ "verdict_plan_shape": {
+  "undrained_us": 82.39998714998364,
+  "drained_us": 96.29997657611966,
+  "ratio": 1.1686892183713014,
+  "undrained_spread": 1.7423242035108006,
+  "note": "the shape, not flashinfer. NUM_LAYERS in that benchmark is the divisor applied to this term, so the effect on the headline is this gap divided by that."
+ }
+}

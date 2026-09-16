@@ -1,0 +1,54 @@
+{
+ "schema": "drainlag/context/1",
+ "runs": [
+  {
+   "import_torch_s": 1.417564500006847,
+   "context_create_s": 0.13423289998900145,
+   "first_matmul_s": 0.10159680002834648,
+   "steady_matmul_s": 6.7099928855896e-05,
+   "context_over_steady": 2000.4924338635353,
+   "first_matmul_over_steady": 1514.111888949034
+  },
+  {
+   "import_torch_s": 1.3904017000459135,
+   "context_create_s": 0.11515159998089075,
+   "first_matmul_s": 0.10222709993831813,
+   "steady_matmul_s": 6.689992733299732e-05,
+   "context_over_steady": 1721.2514956513871,
+   "first_matmul_over_steady": 1528.0599548259336
+  },
+  {
+   "import_torch_s": 1.4185902000172064,
+   "context_create_s": 0.10936570004560053,
+   "first_matmul_s": 0.09766229998786002,
+   "steady_matmul_s": 6.710004527121782e-05,
+   "context_over_steady": 1629.8901081742238,
+   "first_matmul_over_steady": 1455.4729373595774
+  },
+  {
+   "import_torch_s": 1.414190899929963,
+   "context_create_s": 0.10864940006285906,
+   "first_matmul_s": 0.10305850009899586,
+   "steady_matmul_s": 6.699992809444666e-05,
+   "context_over_steady": 1621.6345771252336,
+   "first_matmul_over_steady": 1538.1882194518048
+  },
+  {
+   "import_torch_s": 1.3772661000257358,
+   "context_create_s": 0.11047760001383722,
+   "first_matmul_s": 0.09873159998096526,
+   "steady_matmul_s": 6.719992961734533e-05,
+   "context_over_steady": 1644.013626843461,
+   "first_matmul_over_steady": 1469.221776617473
+  }
+ ],
+ "median": {
+  "import_torch_s": 1.414190899929963,
+  "context_create_ms": 110.47760001383722,
+  "first_matmul_us": 101596.80002834648,
+  "steady_matmul_us": 67.099928855896,
+  "context_over_steady": 1644.013626843461,
+  "first_matmul_over_steady": 1514.111888949034
+ },
+ "reading": "CUDA context creation is thousands of times a steady-state matmul, so the folklore number is not invented -- it is just attached to the wrong thing. It is paid once per process, before the function BD002 inspects is ever called, and no warmup loop inside that function can remove it. The cost a warmup loop *can* remove is the first-call-of-a-new-shape cost, and that one is about 2x."
+}
